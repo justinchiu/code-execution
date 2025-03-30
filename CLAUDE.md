@@ -12,6 +12,12 @@ This is a FastAPI-based code execution server that:
 
 ## Commands to Run
 
+### Adding packages
+
+```bash
+uv add {library}
+```
+
 ### Linting
 
 ```bash
