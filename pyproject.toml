@@ -7,6 +7,7 @@ requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.115.12",
     "morphcloud>=0.1.32",
+    "pre-commit>=4.2.0",
     "pydantic>=2.11.1",
     "pyright>=1.1.398",
     "requests>=2.32.3",
