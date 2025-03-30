@@ -22,10 +22,10 @@ This server accepts code submissions in C++, compiles and executes them against 
 
 3. Test the server:
    ```bash
-   # Simple test
+   # Simple test with basic C++ code
    python test_server.py
    
-   # Code contests test suite
+   # Code contests test suite with various algorithms
    ./scripts/run_tests.sh
    ```
 
