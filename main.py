@@ -35,9 +35,9 @@ class CodeExecutionResponse(BaseModel):
 def compile_cpp(code: str, output_path: str) -> tuple[bool, str, float]:
     """Compile C++ code and return success status, error message if any, and compilation time"""
     # Create a temporary file for the code
-    with tempfile.NamedTemporaryFile(suffix=".cpp", delete=False) as temp_file:
+    with tempfile.NamedTemporaryFile(suffix=".cpp", delete=False, mode="w") as temp_file:
         temp_file_path = temp_file.name
-        temp_file.write(code.encode())
+        temp_file.write(code)
 
     start_time = time.time()
     try:
@@ -66,7 +66,7 @@ def execute_program(executable_path: str, stdin: str) -> tuple[str, float]:
         # Run the compiled program
         process = subprocess.run(
             [executable_path],
-            input=stdin.encode(),
+            input=stdin,
             capture_output=True,
             text=True,
             timeout=5  # 5 seconds timeout for execution
