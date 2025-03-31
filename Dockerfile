@@ -2,12 +2,10 @@ FROM ubuntu:22.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install g++ and other necessary packages
-RUN apt-get update && apt-get install -y \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update -yqq && apt-get install -yqq g++
 RUN apt-get install -yqq libboost-all-dev libssl-dev
 RUN apt-get install -yqq python3.11 python3.11-venv python3.11-distutils python3-pip
+RUN rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
