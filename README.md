@@ -9,6 +9,8 @@ This server accepts code submissions in C++, compiles and executes them against 
 ## Running the Server
 
 ### Local Development
+This will not work for CodeContests, unless you have setup your environment for it.
+Not easy on OSX.
 
 1. Install dependencies:
    ```bash
@@ -27,17 +29,22 @@ This server accepts code submissions in C++, compiles and executes them against 
    python test_server.py
    
    # Code contests test suite with various algorithms
-   ./scripts/run_tests.sh
+   bash scripts/run_tests.sh
    ```
 
 ### Using Docker
+Use this if on OSX.
 
 1. Build and run the Docker container:
    ```bash
-   ./scripts/build_and_run.sh
+   bash scripts/build_and_run.sh
    ```
 
 2. The server will be accessible at: http://localhost:8080
+You can check the server with
+```bash
+bash scripts/run_tests.sh
+```
 
 ### Deploying to Google Cloud Run
 
