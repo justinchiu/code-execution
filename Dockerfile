@@ -3,7 +3,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Install g++ and other necessary packages
 RUN apt-get update -yqq && apt-get install -yqq g++
-RUN apt-get install -yqq libboost-all-dev libssl-dev
+RUN apt-get install -yqq libboost-all-dev
 RUN apt-get install -yqq python3.11 python3-pip
 RUN rm -rf /var/lib/apt/lists/*
 
