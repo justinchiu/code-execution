@@ -17,8 +17,8 @@ hello_world = {
     }
     """,
     "stdin_stdout": [
-        {"stdin": "World", "stdout": "Hello, World!"},
-        {"stdin": "CodeContests", "stdout": "Hello, CodeContests!"},
+        {"stdin": "World", "stdout": "Hello, World!\n"},
+        {"stdin": "CodeContests", "stdout": "Hello, CodeContests!\n"},
     ],
     "language": "cpp",
 }
@@ -36,9 +36,9 @@ sum_two_numbers = {
     }
     """,
     "stdin_stdout": [
-        {"stdin": "5 7", "stdout": "12"},
-        {"stdin": "10 -3", "stdout": "7"},
-        {"stdin": "0 0", "stdout": "0"},
+        {"stdin": "5 7", "stdout": "12\n"},
+        {"stdin": "10 -3", "stdout": "7\n"},
+        {"stdin": "0 0", "stdout": "0\n"},
     ],
     "language": "cpp",
 }
@@ -74,10 +74,10 @@ prime_check = {
     }
     """,
     "stdin_stdout": [
-        {"stdin": "7", "stdout": "YES"},
-        {"stdin": "15", "stdout": "NO"},
-        {"stdin": "23", "stdout": "YES"},
-        {"stdin": "4", "stdout": "NO"},
+        {"stdin": "7", "stdout": "YES\n"},
+        {"stdin": "15", "stdout": "NO\n"},
+        {"stdin": "23", "stdout": "YES\n"},
+        {"stdin": "4", "stdout": "NO\n"},
     ],
     "language": "cpp",
 }
@@ -114,10 +114,10 @@ fibonacci = {
     }
     """,
     "stdin_stdout": [
-        {"stdin": "5", "stdout": "5"},
-        {"stdin": "10", "stdout": "55"},
-        {"stdin": "1", "stdout": "1"},
-        {"stdin": "0", "stdout": "0"},
+        {"stdin": "5", "stdout": "5\n"},
+        {"stdin": "10", "stdout": "55\n"},
+        {"stdin": "1", "stdout": "1\n"},
+        {"stdin": "0", "stdout": "0\n"},
     ],
     "language": "cpp",
 }
@@ -140,7 +140,7 @@ def run_test(name, test_data):
     # Send request to the server
     try:
         response = requests.post(
-            "http://localhost:8080/execute", json=test_data, timeout=30
+            "http://localhost:8088/execute", json=test_data, timeout=30
         )
 
         elapsed = time.time() - start_time
@@ -154,23 +154,22 @@ def run_test(name, test_data):
         result = response.json()
 
         # Print metrics
-        metrics = result.get("metrics", {})
-        print(f"Compilation time: {metrics.get('compilation_time_ms', 0):.2f} ms")
-        print(f"Execution time: {metrics.get('execution_time_ms', 0):.2f} ms")
+        print(f"Compilation time: {result['compile_output']['time_seconds']} secs")
+        print(f"Execution time: {[x['time_seconds']for x in result['exec_outputs']]} secs")
 
         # Check test results
-        results = result.get("results", [])
+        results = result.get("exec_outputs", [])
         total_tests = len(results)
         passed_tests = sum(1 for r in results if r.get("passed", False))
 
         print(f"Tests passed: {passed_tests}/{total_tests}")
 
-        for i, test_result in enumerate(results):
+        for i, (test_result, test_case) in enumerate(zip(results, test_data["stdin_stdout"])):
             status = "✅ Passed" if test_result.get("passed", False) else "❌ Failed"
             print(f"  Test {i + 1}: {status}")
             if not test_result.get("passed", False):
-                print(f"    Expected: '{test_result.get('expected_stdout', '')}'")
-                print(f"    Actual:   '{test_result.get('actual_stdout', '')}'")
+                print(f"    Expected: '{test_case.get('stdout', '')}'")
+                print(f"    Actual:   '{test_result.get('stdout', '')}'")
 
         return passed_tests == total_tests
 
