@@ -140,7 +140,7 @@ def run_test(name, test_data):
     # Send request to the server
     try:
         response = requests.post(
-            "http://localhost:8088/execute", json=test_data, timeout=30
+            "http://localhost:8080/execute", json=test_data, timeout=30
         )
 
         elapsed = time.time() - start_time

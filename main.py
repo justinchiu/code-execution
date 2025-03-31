@@ -95,7 +95,8 @@ def execute_program(executable_path: str, test: StdinStdout) -> Output:
         execution_time = time.time() - start_time  # seconds
 
         return Output(
-            passed=process.stdout == test.stdout,
+            #passed=process.stdout == test.stdout,
+            passed=process.stdout.strip() == test.stdout.strip(),
             stdout=process.stdout,
             stderr=process.stderr,
             time_seconds=execution_time,
