@@ -45,7 +45,7 @@ def compile_cpp(code: str, output_path: str) -> Output:
     try:
         # Compile the code
         compile_process = subprocess.run(
-            ["g++", "-std=c++17", "-o", output_path, temp_file_path],
+            ["g++", "-std=c++20", "-o", output_path, temp_file_path],
             capture_output=True,
             text=True,
             timeout=60,  # 60 seconds timeout for compilation

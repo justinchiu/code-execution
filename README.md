@@ -14,6 +14,7 @@ This server accepts code submissions in C++, compiles and executes them against 
    ```bash
    uv add fastapi pydantic uvicorn requests
    ```
+   GCC and boost are also needed.
 
 2. Run the server:
    ```bash
