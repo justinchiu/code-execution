@@ -1,22 +1,9 @@
 #!/bin/bash
 set -e
 
-# Start the server in the background
-echo "Starting server..."
-uvicorn main:app --host 0.0.0.0 --port 8088 &
-SERVER_PID=$!
-
-# Wait for the server to start
-echo "Waiting for server to start..."
-sleep 2
-
+# Server should be running in docker container
 # Run the tests
 echo "Running tests..."
 uv run python tests/test_server.py
 uv run python tests/test_codecontests.py
-
-# Cleanup - kill the server
-echo "Stopping server..."
-kill $SERVER_PID
-
 echo "Done."
