@@ -12,7 +12,7 @@ sleep 2
 
 # Run the tests
 echo "Running tests..."
-python test_cpp.py
+python tests/test_server.py
 
 # Cleanup - kill the server
 echo "Stopping server..."
