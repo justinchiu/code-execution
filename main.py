@@ -14,31 +14,25 @@ class StdinStdout(BaseModel):
     stdin: str
     stdout: str
 
-
 class CodeExecutionRequest(BaseModel):
     code: str
     stdin_stdout: List[StdinStdout]
     language: str
 
-
-class TestResult(BaseModel):
-    stdin: str
-    expected_stdout: str
-    actual_stdout: str
+class Output(BaseModel):
     passed: bool
-
-
-class ExecutionMetrics(BaseModel):
-    compilation_time_ms: float
-    execution_time_ms: float
-
+    stdout: str
+    stderr: str
+    time_seconds: float
+    timed_out: bool
 
 class CodeExecutionResponse(BaseModel):
-    results: List[TestResult]
-    metrics: ExecutionMetrics
+    compile_output: Output
+    exec_outputs: List[Output]
+    all_passed: bool
 
 
-def compile_cpp(code: str, output_path: str) -> tuple[bool, str, float]:
+def compile_cpp(code: str, output_path: str) -> Output:
     """Compile C++ code and return success status, error message if any, and compilation time"""
     # Create a temporary file for the code
     with tempfile.NamedTemporaryFile(
@@ -59,32 +53,62 @@ def compile_cpp(code: str, output_path: str) -> tuple[bool, str, float]:
         compilation_time = time.time() - start_time  # seconds
 
         if compile_process.returncode != 0:
-            return False, compile_process.stderr, compilation_time
-        return True, "", compilation_time
+            return Output(
+                passed=False,
+                stdout="",
+                stderr=compile_process.stderr,
+                time_seconds=compilation_time,
+                timed_out=False,
+            )
+        return Output(
+            passed=True,
+            stdout="",
+            stderr="",
+            time_seconds=compilation_time,
+            timed_out=False,
+        )
     except subprocess.TimeoutExpired:
-        return False, "Compilation timed out", (time.time() - start_time) * 1000
+        return Output(
+            passed=False,
+            stdout="",
+            stderr="Compilation timed out",
+            time_seconds=(time.time() - start_time),
+            timed_out=True,
+        )
     finally:
         # Clean up the temporary CPP file
         os.unlink(temp_file_path)
 
 
-def execute_program(executable_path: str, stdin: str) -> tuple[str, float]:
+def execute_program(executable_path: str, test: StdinStdout) -> Output:
     """Execute the compiled program with the given stdin and return stdout and execution time"""
     start_time = time.time()
     try:
         # Run the compiled program
         process = subprocess.run(
             [executable_path],
-            input=stdin,
+            input=test.stdin,
             capture_output=True,
             text=True,
             timeout=120,  # 120 seconds timeout for execution
         )
         execution_time = time.time() - start_time  # seconds
 
-        return process.stdout.strip(), execution_time
+        return Output(
+            passed=process.stdout == test.stdout,
+            stdout=process.stdout,
+            stderr=process.stderr,
+            time_seconds=execution_time,
+            timed_out=False,
+        )
     except subprocess.TimeoutExpired:
-        return "Execution timed out", (time.time() - start_time) * 1000
+        return Output(
+            passed=False,
+            stdout="Error: Timed out",
+            stderr="Error: Timed out",
+            time_seconds=(time.time() - start_time),
+            timed_out=True,
+        )
 
 
 @app.post("/execute", response_model=CodeExecutionResponse)
@@ -101,13 +125,13 @@ async def execute_code(request: CodeExecutionRequest) -> CodeExecutionResponse:
 
     try:
         # Compile the code
-        compile_success, compile_error, compilation_time = compile_cpp(
-            request.code, executable_path
-        )
+        compile_output = compile_cpp(request.code, executable_path)
 
-        if not compile_success:
-            raise HTTPException(
-                status_code=400, detail=f"Compilation error: {compile_error}"
+        if not compile_output.passed:
+            return CodeExecutionResponse(
+                compile_output=compile_output,
+                exec_outputs=[],
+                all_passed=False,
             )
 
         # Execute tests
@@ -115,33 +139,14 @@ async def execute_code(request: CodeExecutionRequest) -> CodeExecutionResponse:
         total_execution_time = 0
 
         for test_case in request.stdin_stdout:
-            actual_stdout, execution_time = execute_program(
-                executable_path, test_case.stdin
-            )
-            total_execution_time += execution_time
-
-            results.append(
-                TestResult(
-                    stdin=test_case.stdin,
-                    expected_stdout=test_case.stdout,
-                    actual_stdout=actual_stdout,
-                    passed=actual_stdout == test_case.stdout,
-                )
-            )
-
-        # Calculate average execution time
-        avg_execution_time = (
-            total_execution_time / len(request.stdin_stdout)
-            if request.stdin_stdout
-            else 0
-        )
+            exec_output = execute_program(executable_path, test_case)
+            results.append(exec_output)
+            total_execution_time += exec_output.time_seconds
 
         return CodeExecutionResponse(
-            results=results,
-            metrics=ExecutionMetrics(
-                compilation_time_ms=compilation_time,
-                execution_time_ms=avg_execution_time,
-            ),
+            compile_output=compile_output,
+            exec_outputs=results,
+            all_passed=all([r.passed for r in results])
         )
 
     finally:
