@@ -5,7 +5,7 @@ import json
 
 # Sample C++ solutions for code contest problems
 dataset = datasets.load_dataset("deepmind/code_contests", trust_remote_code=True)
-train = dataset["train"]
+train = dataset["test"]
 
 def get_tests(test_dict: dict) -> list[dict]:
     return [dict(stdin=input, stdout=output) for input, output in zip(test_dict["input"], test_dict["output"])]
