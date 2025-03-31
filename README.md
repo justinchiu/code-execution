@@ -8,7 +8,7 @@ This server accepts code submissions in C++, compiles and executes them against 
 
 ## Running the Server
 
-### Local Development
+### Local Development (Avoid)
 This will not work for CodeContests, unless you have setup your environment for it.
 Not easy on OSX.
 
@@ -26,14 +26,13 @@ Not easy on OSX.
 3. Test the server:
    ```bash
    # Simple test with basic C++ code
-   python test_server.py
+   bash scripts/run_tests_local.sh
    
-   # Code contests test suite with various algorithms
+   # Code contests test suite...if your computer can handle it
    bash scripts/run_tests.sh
    ```
 
-### Using Docker
-Use this if on OSX.
+### Using Docker (Preferred)
 
 1. Build and run the Docker container:
    ```bash
