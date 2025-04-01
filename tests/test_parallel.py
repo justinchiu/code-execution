@@ -20,7 +20,7 @@ def get_solutions(problems):
             if language == 2:  # C++ solutions
                 tests = get_tests(problem["public_tests"]) + get_tests(problem["private_tests"]) + get_tests(problem["generated_tests"])
                 solutions.append(dict(code=solution, language="cpp", stdin_stdout=tests))
-                if len(solutions) == 5:
+                if len(solutions) == 10:
                     return solutions
 
 problems = get_solutions(train)

@@ -21,4 +21,4 @@ EXPOSE 8080
 
 # Run the server
 #CMD uvicorn main:app --host 0.0.0.0 --port 8080 --workers 16
-CMD uv run gunicorn -k uvicorn.workers.UvicornWorker main:app --bind=0.0.0.0:8080
+CMD uv run gunicorn -g 16 -k uvicorn.workers.UvicornWorker main:app --bind=0.0.0.0:8080
