@@ -46,7 +46,10 @@ def run_sequential():
                 result = response.json()
                 passed_tests = sum(1 for r in result.get("exec_outputs", []) if r.get("passed", False))
                 total_tests = len(result.get("exec_outputs", []))
-                print(f"  Test {i+1}: Passed {passed_tests}/{total_tests} test cases")
+                compile_time = result.get("compile_output", {}).get("time_seconds", 0)
+                execution_times = [output.get("time_seconds", 0) for output in result.get("exec_outputs", [])]
+                total_exec_time = sum(execution_times)
+                print(f"  Test {i+1}: Passed {passed_tests}/{total_tests} test cases, Compile: {compile_time:.3f}s, Execution: {total_exec_time:.3f}s")
                 
                 if passed_tests == total_tests:
                     total_passed += 1
@@ -75,7 +78,10 @@ async def execute_code_async(session, test_data, index):
                 result = await response.json()
                 passed_tests = sum(1 for r in result.get("exec_outputs", []) if r.get("passed", False))
                 total_tests = len(result.get("exec_outputs", []))
-                print(f"  Test {index+1}: Passed {passed_tests}/{total_tests} test cases")
+                compile_time = result.get("compile_output", {}).get("time_seconds", 0)
+                execution_times = [output.get("time_seconds", 0) for output in result.get("exec_outputs", [])]
+                total_exec_time = sum(execution_times)
+                print(f"  Test {index+1}: Passed {passed_tests}/{total_tests} test cases, Compile: {compile_time:.3f}s, Execution: {total_exec_time:.3f}s")
                 
                 return passed_tests == total_tests
             else:
