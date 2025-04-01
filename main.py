@@ -113,7 +113,7 @@ def execute_program(executable_path: str, test: StdinStdout) -> Output:
 
 
 @app.post("/execute", response_model=CodeExecutionResponse)
-async def execute_code(request: CodeExecutionRequest) -> CodeExecutionResponse:
+def execute_code(request: CodeExecutionRequest) -> CodeExecutionResponse:
     if request.language.lower() != "cpp":
         raise HTTPException(
             status_code=400,
