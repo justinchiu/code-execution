@@ -37,7 +37,7 @@ def run_sequential():
         try:
             print(f"Running test {i+1}/{len(problems)}")
             response = requests.post(
-                "http://localhost:8080/execute", 
+                "https://code-execution-936673687579.us-east1.run.app/execute", 
                 json=test_data, 
                 timeout=300
             )
@@ -69,7 +69,7 @@ def run_sequential():
 async def execute_code_async(session, test_data, index):
     try:
         async with session.post(
-            "http://localhost:8080/execute", 
+            "https://code-execution-936673687579.us-east1.run.app/execute", 
             json=test_data, 
             timeout=300
         ) as response:
