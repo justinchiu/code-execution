@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL = "http://localhost:8088"
+BASE_URL = "http://localhost:8080"
 
 # Test cases for Python execution
 def test_hello_world_python():

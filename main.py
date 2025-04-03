@@ -3,8 +3,8 @@ import tempfile
 import shutil
 
 from fastapi import FastAPI, HTTPException
-from src.code_execution.types import CodeExecutionRequest, CodeExecutionResponse
-from src.code_execution.languages import get_language_handler
+from code_execution.types import CodeExecutionRequest, CodeExecutionResponse
+from code_execution.languages import get_language_handler
 
 app = FastAPI(title="Code Execution API")
 
@@ -22,6 +22,8 @@ def execute_code(request: CodeExecutionRequest) -> CodeExecutionResponse:
     try:
         # Compile/prepare the code
         compile_output = handler.compile(request.code, code_path)
+        print("BLAH")
+        print(compile_output)
         
         if not compile_output.passed:
             return CodeExecutionResponse(

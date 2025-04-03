@@ -12,40 +12,13 @@ class PythonHandler(LanguageHandler):
         # Python doesn't need compilation, write code to file
         with open(output_path, 'w') as f:
             f.write(code)
-        
-        try:
-            # Check for syntax errors
-            process = subprocess.run(
-                ["python3", "-m", "py_compile", output_path],
-                capture_output=True,
-                text=True,
-                timeout=30  # 30 seconds timeout for syntax check
-            )
-            
-            if process.returncode != 0:
-                return Output(
-                    passed=False,
-                    stdout="",
-                    stderr=process.stderr,
-                    time_seconds=0,
-                    timed_out=False,
-                )
-            
-            return Output(
-                passed=True,
-                stdout="",
-                stderr="",
-                time_seconds=0,  # No compilation time for Python
-                timed_out=False,
-            )
-        except subprocess.TimeoutExpired:
-            return Output(
-                passed=False,
-                stdout="",
-                stderr="Syntax check timed out",
-                time_seconds=30,
-                timed_out=True,
-            )
+        return Output(
+            passed=True,
+            stdout="",
+            stderr="",
+            time_seconds=0,  # No compilation time for Python
+            timed_out=False,
+        )
         
     def execute(self, code_path: str, test: StdinStdout) -> Output:
         # Execute Python script
@@ -57,7 +30,8 @@ class PythonHandler(LanguageHandler):
                 input=test.stdin,
                 capture_output=True,
                 text=True,
-                timeout=120,  # 120 seconds timeout for execution
+                timeout=30,  # 30 seconds timeout for execution (reduced for testing)
+                check=False,
             )
             execution_time = time.time() - start_time  # seconds
 
