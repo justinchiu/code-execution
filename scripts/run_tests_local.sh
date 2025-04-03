@@ -13,6 +13,8 @@ sleep 2
 # Run the tests
 echo "Running tests..."
 uv run python tests/test_server.py
+echo "Running Python execution tests..."
+uv run pytest tests/test_python_execution.py -v
 
 # Cleanup - kill the server
 echo "Stopping server..."

@@ -43,6 +43,7 @@ uvicorn main:app --reload
 3. Set execution time limits to prevent infinite loops
 4. Track performance metrics for both compilation and execution
 5. Ensure thorough validation of all inputs
+6. Never manipulate the PYTHON_PATH or sys.path or path environments
 
 ## Project Structure
 
