@@ -1,9 +1,6 @@
-from fastapi.testclient import TestClient
+import requests
 
-# Import using a dot to indicate relative import from the package root
-from main import app
-
-client = TestClient(app)
+BASE_URL = "http://localhost:8088"
 
 # Test cases for Python execution
 def test_hello_world_python():
@@ -19,7 +16,7 @@ print(f"Hello, {name}!")
         ],
         "language": "python",
     }
-    response = client.post("/execute", json=payload)
+    response = requests.post(f"{BASE_URL}/execute", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert data["all_passed"]
@@ -41,7 +38,7 @@ print(a + b)
         ],
         "language": "python",
     }
-    response = client.post("/execute", json=payload)
+    response = requests.post(f"{BASE_URL}/execute", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert data["all_passed"]
@@ -81,7 +78,7 @@ else:
         ],
         "language": "python",
     }
-    response = client.post("/execute", json=payload)
+    response = requests.post(f"{BASE_URL}/execute", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert data["all_passed"]
@@ -117,7 +114,7 @@ else:
         ],
         "language": "python",
     }
-    response = client.post("/execute", json=payload)
+    response = requests.post(f"{BASE_URL}/execute", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert data["all_passed"]
@@ -136,7 +133,7 @@ print("Missing closing parenthesis"
         ],
         "language": "python",
     }
-    response = client.post("/execute", json=payload)
+    response = requests.post(f"{BASE_URL}/execute", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert not data["all_passed"]
@@ -155,7 +152,7 @@ while True:
         ],
         "language": "python",
     }
-    response = client.post("/execute", json=payload)
+    response = requests.post(f"{BASE_URL}/execute", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert not data["all_passed"]
@@ -196,7 +193,7 @@ print(json.dumps(result))
         ],
         "language": "python",
     }
-    response = client.post("/execute", json=payload)
+    response = requests.post(f"{BASE_URL}/execute", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert data["all_passed"]
